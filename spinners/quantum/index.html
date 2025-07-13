@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quantum Orbital Loader</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0f0f1a;
+        overflow: hidden;
+        font-family: "Arial", sans-serif;
+      }
+
+      .loader-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+      }
+
+      .central-orb {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(145deg, #00f2ff, #0084ff);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 20px #00f2ff, 0 0 40px rgba(0, 242, 255, 0.3);
+        z-index: 10;
+        animation: pulse 2s infinite alternate;
+      }
+
+      .orbit {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        top: 0;
+        left: 0;
+      }
+
+      .quantum-dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: linear-gradient(145deg, #ff00aa, #ff0066);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px #ff00aa;
+        z-index: 5;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0;
+      }
+
+      .loading-text {
+        position: absolute;
+        bottom: -40px;
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      .progress-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .progress-ring__circle {
+        fill: none;
+        stroke: url(#gradient);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-dasharray: 10, 10;
+        animation: rotate 4s linear infinite;
+        transform-origin: 50% 50%;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+      }
+
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader-container">
+      <svg class="progress-ring" viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00f2ff" />
+            <stop offset="100%" stop-color="#ff00aa" />
+          </linearGradient>
+        </defs>
+        <circle class="progress-ring__circle" cx="100" cy="100" r="90" />
+      </svg>
+
+      <div class="orbit"></div>
+      <div class="central-orb"></div>
+      <div class="quantum-dot" id="dot1"></div>
+      <div class="quantum-dot" id="dot2"></div>
+      <div class="quantum-dot" id="dot3"></div>
+
+      <div class="loading-text">Quantum Loading...</div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.querySelector(".loader-container");
+        const dots = [
+          document.getElementById("dot1"),
+          document.getElementById("dot2"),
+          document.getElementById("dot3"),
+        ];
+
+        // Create particles
+        function createParticles() {
+          for (let i = 0; i < 30; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            container.appendChild(particle);
+
+            // Animate particles
+            animateParticle(particle);
+          }
+        }
+
+        function animateParticle(particle) {
+          const duration = 2 + Math.random() * 3;
+          const delay = Math.random() * 5;
+
+          particle.style.animation = `
+                    fade ${duration}s ${delay}s infinite alternate
+                `;
+
+          // Random movement
+          const keyframes = `
+                    @keyframes fade {
+                        0% {
+                            opacity: 0;
+                            transform: translate(0, 0);
+                        }
+                        50% {
+                            opacity: ${0.2 + Math.random() * 0.5};
+                            transform: translate(${
+                              Math.random() * 40 - 20
+                            }px, ${Math.random() * 40 - 20}px);
+                        }
+                        100% {
+                            opacity: 0;
+                            transform: translate(${
+                              Math.random() * 80 - 40
+                            }px, ${Math.random() * 80 - 40}px);
+                        }
+                    }
+                `;
+
+          const style = document.createElement("style");
+          style.innerHTML = keyframes;
+          document.head.appendChild(style);
+        }
+
+        // Animate quantum dots in orbital paths
+        function animateDots() {
+          let angle1 = 0;
+          let angle2 = 120;
+          let angle3 = 240;
+          const radius = 80;
+          const centerX = 100;
+          const centerY = 100;
+          const speed = 0.02;
+
+          function update() {
+            angle1 += speed;
+            angle2 += speed;
+            angle3 += speed;
+
+            dots[0].style.left = `${centerX + Math.cos(angle1) * radius - 6}px`;
+            dots[0].style.top = `${centerY + Math.sin(angle1) * radius - 6}px`;
+
+            dots[1].style.left = `${centerX + Math.cos(angle2) * radius - 6}px`;
+            dots[1].style.top = `${centerY + Math.sin(angle2) * radius - 6}px`;
+
+            dots[2].style.left = `${centerX + Math.cos(angle3) * radius - 6}px`;
+            dots[2].style.top = `${centerY + Math.sin(angle3) * radius - 6}px`;
+
+            // Add trail effect
+            if (Math.random() > 0.7) {
+              createTrail(
+                centerX + Math.cos(angle1) * radius,
+                centerY + Math.sin(angle1) * radius,
+                "#ff00aa"
+              );
+            }
+
+            requestAnimationFrame(update);
+          }
+
+          update();
+        }
+
+        // Create trail effect
+        function createTrail(x, y, color) {
+          const trail = document.createElement("div");
+          trail.className = "particle";
+          trail.style.width = "6px";
+          trail.style.height = "6px";
+          trail.style.left = `${x}px`;
+          trail.style.top = `${y}px`;
+          trail.style.background = color;
+          trail.style.boxShadow = `0 0 10px ${color}`;
+          container.appendChild(trail);
+
+          setTimeout(() => {
+            trail.style.transition = "all 0.5s ease-out";
+            trail.style.opacity = "0";
+            trail.style.transform = "scale(0.5)";
+            setTimeout(() => {
+              trail.remove();
+            }, 500);
+          }, 0);
+        }
+
+        // Animate loading text
+        function animateText() {
+          const text = document.querySelector(".loading-text");
+          let dots = "";
+          setInterval(() => {
+            dots = dots.length >= 3 ? "" : dots + ".";
+            text.textContent = `Quantum Loading${dots}`;
+          }, 500);
+        }
+
+        createParticles();
+        animateDots();
+        animateText();
+      });
+    </script>
+  </body>
+</html>

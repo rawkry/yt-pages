@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Animated Toggle Switch</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        background: linear-gradient(to bottom, #000000, #0a0a23);
+        transition: background 1s ease, color 1s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden;
+        position: relative;
+      }
+
+      body.day-mode {
+        background: linear-gradient(to bottom, #30353a, #778c96);
+        overflow: hidden;
+      }
+
+      .container {
+        text-align: center;
+        z-index: 1;
+        position: relative;
+      }
+
+      .title {
+        color: white;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        animation: titleGlow 4s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        from {
+          text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        to {
+          text-shadow: 0 4px 30px rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      .subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.2rem;
+        margin-bottom: 4rem;
+        font-weight: 300;
+      }
+
+      .toggle-container {
+        position: relative;
+        display: inline-block;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(30px);
+        border-radius: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .toggle-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .premium-toggle {
+        position: relative;
+        width: 200px;
+        height: 80px;
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 3px solid #333;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+          inset 0 2px 0 rgba(255, 255, 255, 0.1),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      /* Animated background gradient */
+      .premium-toggle::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(145deg, #4facfe, #00f2fe);
+        border-radius: 37px;
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+      }
+
+      /* Shimmer effect */
+      .premium-toggle::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        animation: shimmer 3s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        50% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+      }
+
+      /* Toggle button */
+      .toggle-button {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        border-radius: 50%;
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2),
+          inset 0 2px 0 rgba(255, 255, 255, 0.9),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #666;
+      }
+
+      /* Magnetic field effect */
+      .magnetic-field {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(79, 172, 254, 0.3) 0%,
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        transition: all 0.6s ease;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Particle effects */
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      /* Active state */
+      .premium-toggle.active {
+        /* background: linear-gradient(145deg, #4facfe, #00f2fe); */
+        border-color: #4facfe;
+        box-shadow: 0 15px 40px rgba(79, 172, 254, 0.4),
+          inset 0 2px 0 rgba(255, 255, 255, 0.2),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .premium-toggle.active::before {
+        left: 0;
+      }
+
+      .premium-toggle.active .toggle-button {
+        transform: translateX(120px) rotate(180deg);
+        background: linear-gradient(145deg, #ffd700, #ffa500);
+        box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4),
+          inset 0 2px 0 rgba(255, 255, 255, 0.9),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+        color: #fff;
+      }
+
+      .premium-toggle.active .magnetic-field {
+        width: 300px;
+        height: 300px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.1);
+          opacity: 0.6;
+        }
+      }
+
+      /* Glowing Sun Icon */
+      .status-item.active .status-circle {
+        animation: glowSun 4s ease-in-out infinite;
+      }
+
+      @keyframes glowSun {
+        0%,
+        100% {
+          box-shadow: 0 0 12px rgba(255, 223, 0, 0.3),
+            0 0 25px rgba(255, 223, 0, 0.2);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(255, 223, 0, 0.6),
+            0 0 35px rgba(255, 223, 0, 0.4);
+        }
+      }
+
+      /* Status indicators */
+      .status-container {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+      }
+
+      .status-item {
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .status-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .status-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .status-item.active .status-circle {
+        background: linear-gradient(145deg, #4facfe, #00f2fe);
+        border-color: #4facfe;
+        box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+        transform: scale(1.1);
+      }
+
+      .status-item.active .status-label {
+        color: white;
+        text-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
+      }
+
+      /* Click animation */
+      .premium-toggle:active {
+        transform: scale(0.98);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .title {
+          font-size: 2rem;
+        }
+
+        .premium-toggle {
+          width: 160px;
+          height: 64px;
+        }
+
+        .toggle-button {
+          width: 48px;
+          height: 48px;
+          font-size: 1.2rem;
+        }
+
+        .premium-toggle.active .toggle-button {
+          transform: translateX(96px) rotate(180deg);
+        }
+
+        .status-container {
+          flex-direction: column;
+          gap: 2rem;
+        }
+      }
+
+      .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        opacity: 0;
+        animation: twinkle 4s infinite ease-in-out;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.4);
+        }
+      }
+
+      /* Clouds */
+      .cloud {
+        position: absolute;
+        background: #fff;
+        background: radial-gradient(circle at 30% 30%, #ffffff, #dbeaff);
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: floatCloud 60s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .cloud::after,
+      .cloud::before {
+        content: "";
+        position: absolute;
+        background: inherit;
+        border-radius: 50%;
+      }
+
+      .cloud::before {
+        width: 100%;
+        height: 100%;
+        top: -30%;
+        left: 40%;
+      }
+
+      .cloud::after {
+        width: 80%;
+        height: 80%;
+        top: 20%;
+        left: -40%;
+      }
+
+      @keyframes floatCloud {
+        0% {
+          transform: translateX(-50px);
+        }
+        100% {
+          transform: translateX(110vw);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Day/Night Toggle</h1>
+      <p class="subtitle">@CodeForgeBySudeep</p>
+
+      <div class="toggle-container">
+        <div class="premium-toggle" id="premiumToggle">
+          <div class="magnetic-field"></div>
+          <div class="toggle-button">🌙</div>
+        </div>
+      </div>
+
+      <div class="status-container">
+        <div class="status-item" id="statusOff">
+          <div class="status-circle">🌙</div>
+          <div class="status-label">Night Mode</div>
+        </div>
+        <div class="status-item" id="statusOn">
+          <div class="status-circle">☀️</div>
+          <div class="status-label">Day Mode</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const toggle = document.getElementById("premiumToggle");
+      const statusOff = document.getElementById("statusOff");
+      const statusOn = document.getElementById("statusOn");
+      const toggleButton = toggle.querySelector(".toggle-button");
+
+      let isActive = false;
+
+      // Set initial state
+      statusOff.classList.add("active");
+
+      function createParticles(x, y) {
+        for (let i = 0; i < 12; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = x + "px";
+          particle.style.top = y + "px";
+
+          const angle = (i * 30 * Math.PI) / 180;
+          const velocity = 50 + Math.random() * 30;
+          const life = 800 + Math.random() * 400;
+
+          document.body.appendChild(particle);
+
+          // Animate particle
+          particle.style.opacity = "1";
+          particle.style.transform = `translate(${
+            Math.cos(angle) * velocity
+          }px, ${Math.sin(angle) * velocity}px) scale(0)`;
+          particle.style.transition = `all ${life}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+
+          setTimeout(() => {
+            particle.remove();
+          }, life);
+        }
+      }
+
+      function toggleSwitch() {
+        isActive = !isActive;
+        toggle.classList.toggle("active");
+        document.body.classList.toggle("day-mode");
+
+        if (isActive) {
+          statusOff.classList.remove("active");
+          statusOn.classList.add("active");
+          toggleButton.textContent = "☀️";
+          clearStars(); // remove stars in day mode
+          createClouds();
+        } else {
+          statusOn.classList.remove("active");
+          statusOff.classList.add("active");
+          toggleButton.textContent = "🌙";
+          clearClouds();
+          createStars();
+        }
+
+        const rect = toggle.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        createParticles(centerX, centerY);
+
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }
+
+      // Add click event
+      toggle.addEventListener("click", toggleSwitch);
+
+      toggle.addEventListener("mouseleave", () => {
+        toggleButton.style.transform = "";
+      });
+
+      function createStars(count = 100) {
+        for (let i = 0; i < count; i++) {
+          const star = document.createElement("div");
+          star.classList.add("star");
+
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+
+          star.style.left = `${x}px`;
+          star.style.top = `${y}px`;
+          star.style.animationDelay = `${Math.random() * 5}s`;
+
+          document.body.appendChild(star);
+        }
+      }
+
+      function clearStars() {
+        document.querySelectorAll(".star").forEach((star) => star.remove());
+      }
+      createStars();
+
+      function createClouds(count = 5) {
+        for (let i = 0; i < count; i++) {
+          const cloud = document.createElement("div");
+          cloud.classList.add("cloud");
+
+          const size = 60 + Math.random() * 100;
+          const top = Math.random() * window.innerHeight * 0.8;
+          const duration = 30 + Math.random() * 40;
+
+          cloud.style.width = `${size}px`;
+          cloud.style.height = `${size * 0.6}px`;
+          cloud.style.top = `${top}px`;
+          cloud.style.left = `-${size}px`;
+          cloud.style.animationDuration = `${duration}s`;
+
+          document.body.appendChild(cloud);
+        }
+      }
+
+      function clearClouds() {
+        document.querySelectorAll(".cloud").forEach((c) => c.remove());
+      }
+
+      // Add entrance animation
+      setTimeout(() => {
+        toggle.style.animation = "none";
+        toggle.style.opacity = "0";
+        toggle.style.transform = "scale(0.8) translateY(20px)";
+        toggle.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+
+        setTimeout(() => {
+          toggle.style.opacity = "1";
+          toggle.style.transform = "scale(1) translateY(0)";
+        }, 100);
+      }, 100);
+
+      // Add keyboard support
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" || e.code === "Enter") {
+          e.preventDefault();
+          toggleSwitch();
+        }
+      });
+
+      // Add subtle breathing animation when idle
+      let breathingInterval = setInterval(() => {
+        if (!isActive) {
+          toggle.style.transform = "scale(1.02)";
+          setTimeout(() => {
+            toggle.style.transform = "scale(1)";
+          }, 1000);
+        }
+      }, 4000);
+    </script>
+  </body>
+</html>
